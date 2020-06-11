@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using HPlusSport.API.Classes;
 using HPlusSport.API.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -75,12 +76,16 @@ namespace HPlusSport.API.Controllers
         }
         */
 
-        //Getting all data
+        //Getting all data by once result into problem if the data is too large, so we divide them using size and we can see other using pagination. 
         [HttpGet]
-        public async Task<IActionResult> GetAllProducts() 
+        public async Task<IActionResult> GetAllProducts([FromQuery] QueryParameters queryParameters) //to see the amount of product you want you need to specify that amount as int here, and to see others you need to specify page number 
         {
-            var products = await _context.Products.ToArrayAsync();
-            return Ok(products); //we can also write return OK(_context.Products.ToArray()); OK is a helper method
+            IQueryable<Product> products = _context.Products;
+            products = products
+                .Skip(queryParameters.Size * (queryParameters.Page - 1))
+                .Take(queryParameters.Size);
+
+            return Ok(await products.ToArrayAsync());
         }
 
         //Getting specific data
