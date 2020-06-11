@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 using HPlusSport.API.Classes;
 using HPlusSport.API.Models;
@@ -80,7 +81,7 @@ namespace HPlusSport.API.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAllProducts([FromQuery] ProductQueryParameters queryParameters) //to see the amount of product you want you need to specify that amount as int here, and to see others you need to specify page number 
         {
-            IQueryable<Product> products = _context.Products;
+            IQueryable<Product> products = _context.Products; //querying all data
 
             //filtering by price
             if (queryParameters.MinPrice != null && queryParameters.MaxPrice != null) //we check if MaxPrice and MinPrice has been set
@@ -96,8 +97,24 @@ namespace HPlusSport.API.Controllers
                 products = products.Where(p=>p.Sku == queryParameters.Sku);
             }
 
+            //serching items example you can pass this parameters: https://localhost:44388/products?size=10&page=1&name=Orange mineral water
+            if (!string.IsNullOrEmpty(queryParameters.Name)) //!string.IsNullOrEmpty() check if only this paramter has been set, ie has been specified by the user.
+            {
+                products = products.Where(
+                    p => p.Name.ToLower().Contains(queryParameters.Name.ToLower()));
+            }
+
+            //Sorting items example: https://localhost:44388/products?sortBy=Price&sortOrder=desc
+            if (!string.IsNullOrEmpty(queryParameters.SortBy))
+            {
+                if(typeof(Product).GetProperty(queryParameters.SortBy) != null)
+                {
+                    products = products.OrderByCustom(queryParameters.SortBy, queryParameters.SortOrder);
+                }
+            }
+
             products = products
-                .Skip(queryParameters.Size * (queryParameters.Page - 1))
+                .Skip(queryParameters.Size * (queryParameters.Page - 1)) // example, for page number 2 we have to skip one times the size given items, show from the next item number follow
                 .Take(queryParameters.Size);
 
             return Ok(await products.ToArrayAsync());
