@@ -132,6 +132,7 @@ namespace HPlusSport.API.Controllers
             return Ok(product);
         }
 
+        //Adding the item
         [HttpPost]
         public async Task<ActionResult<Product>> PostProduct([FromBody] Product product)  // by ActionResult<Product> We expect to return Action result of type product, async Task<> , await for asnchronization.
         {
@@ -144,6 +145,7 @@ namespace HPlusSport.API.Controllers
                 );                          //you dont want to reveal to the user, they you need to create another class view and return it instead of returning the complete data.
         }
 
+        //Updating the item
         [HttpPut("{id}")]
         public async Task<IActionResult> PutProduct([FromRoute]int id, [FromBody] Product product) //Task<IActionResult> we use this because when everything is right we dont return anything.
         {
@@ -167,6 +169,22 @@ namespace HPlusSport.API.Controllers
             }
 
             return NoContent(); //if everything goes OK, return nothing. This is the suggested .NeT method to return when you update items in db
+        }
+
+        //Deleting the item
+        [HttpDelete("{id}")]
+        public async Task<ActionResult<Product>> DeleteProduct(int id) // we use ActionResult<Product> because we want to return product that has been deleted
+        {
+            var product = await _context.Products.FindAsync(id); //such for the product
+            if(product == null)
+            {
+                return NotFound();
+            }
+
+            _context.Products.Remove(product);
+            await _context.SaveChangesAsync();
+
+            return product; //there are many approach here, you can also use NoContent() and return nothing after deleting the product,or return a deleted product as done here.
         }
     }
 }
