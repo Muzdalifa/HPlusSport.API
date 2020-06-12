@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Versioning;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -42,6 +43,7 @@ namespace HPlusSport.API
                 Options.ReportApiVersions = true;
                 Options.DefaultApiVersion = new ApiVersion(1, 0);
                 Options.AssumeDefaultVersionWhenUnspecified = true;
+                Options.ApiVersionReader = new HeaderApiVersionReader("X-API-Version"); //To implement header version add this line.
                 });
         }
 

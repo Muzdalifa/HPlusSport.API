@@ -12,7 +12,8 @@ using Microsoft.EntityFrameworkCore;
 namespace HPlusSport.API.Controllers
 {
     [ApiVersion("1.0")]
-    [Route("v{v:apiVersion}/products")] //we have removed [controller] so that the route to this controller can be acessed directly by the name of the controller.
+    //[Route("v{v:apiVersion}/products")] //we have removed [controller] so that the route to this controller can be acessed directly by the name of the controller.
+    [Route("products")] //implementing header versioning add this only and line in startup file. Versioning in Header is much easier than other 
     [ApiController]
     public class ProductsV1_0Controller : ControllerBase
     {
@@ -192,7 +193,8 @@ namespace HPlusSport.API.Controllers
     //SECOND CONTROLLER VERSION_2
 
     [ApiVersion("2.0")]
-    [Route("v{v:apiVersion}/products")] //Before putting version we were accessing the controller using the name of the controller, but now we access it version and name such as https://localhost:44388/v2.0/products
+    //[Route("v{v:apiVersion}/products")] //Before putting version we were accessing the controller using the name of the controller, but now we access it version and name such as https://localhost:44388/v2.0/products
+    [Route("products")]   //iplementing header versioning
     [ApiController]
     public class ProductsV2_0Controller : ControllerBase
     {
