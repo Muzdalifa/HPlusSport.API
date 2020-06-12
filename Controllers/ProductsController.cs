@@ -13,7 +13,7 @@ namespace HPlusSport.API.Controllers
 {
     [ApiVersion("1.0")]
     //[Route("v{v:apiVersion}/products")] //we have removed [controller] so that the route to this controller can be acessed directly by the name of the controller.
-    [Route("products")] //implementing header versioning add this only and line in startup file. Versioning in Header is much easier than other 
+    [Route("products")] //implementing header versioning add this only and line in startup file. Versioning in Header is MORE PRACTIBLE than other, QueryString is the easiest one to implement. 
     [ApiController]
     public class ProductsV1_0Controller : ControllerBase
     {

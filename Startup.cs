@@ -43,8 +43,8 @@ namespace HPlusSport.API
                 Options.ReportApiVersions = true;
                 Options.DefaultApiVersion = new ApiVersion(1, 0);
                 Options.AssumeDefaultVersionWhenUnspecified = true;
-                Options.ApiVersionReader = new HeaderApiVersionReader("X-API-Version"); //To implement header version add this line.
-                });
+                //Options.ApiVersionReader = new HeaderApiVersionReader("X-API-Version"); //this line was for header vesrion, To implement Query string version remove this line only and access the version using https://localhost:44388/products?api-versio=2.0.
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
