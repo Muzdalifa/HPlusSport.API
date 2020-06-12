@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
 using HPlusSport.API.Models;
@@ -36,6 +37,12 @@ namespace HPlusSport.API
                     //Options.SuppressModelStateInvalidFilter = true;
                 }
                 );
+            //Configuring URL versioning.
+            services.AddApiVersioning(Options => {
+                Options.ReportApiVersions = true;
+                Options.DefaultApiVersion = new ApiVersion(1, 0);
+                Options.AssumeDefaultVersionWhenUnspecified = true;
+                });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

@@ -11,13 +11,14 @@ using Microsoft.EntityFrameworkCore;
 
 namespace HPlusSport.API.Controllers
 {
-    [Route("[controller]")] //we have removed api/ so that the route to this controller is just the name of the controller which is the classname minus word Conroller
+    [ApiVersion("1.0")]
+    [Route("v{v:apiVersion}/products")] //we have removed [controller] so that the route to this controller can be acessed directly by the name of the controller.
     [ApiController]
-    public class ProductsController : ControllerBase
+    public class ProductsV1_0Controller : ControllerBase
     {
         private readonly ShopContext _context;
 
-        public ProductsController(ShopContext context)
+        public ProductsV1_0Controller(ShopContext context)
         {
             _context = context;
 
@@ -185,6 +186,134 @@ namespace HPlusSport.API.Controllers
             await _context.SaveChangesAsync();
 
             return product; //there are many approach here, you can also use NoContent() and return nothing after deleting the product,or return a deleted product as done here.
+        }
+    }
+
+    //SECOND CONTROLLER VERSION_2
+
+    [ApiVersion("2.0")]
+    [Route("v{v:apiVersion}/products")] //Before putting version we were accessing the controller using the name of the controller, but now we access it version and name such as https://localhost:44388/v2.0/products
+    [ApiController]
+    public class ProductsV2_0Controller : ControllerBase
+    {
+        private readonly ShopContext _context;
+
+        public ProductsV2_0Controller(ShopContext context)
+        {
+            _context = context;
+
+            _context.Database.EnsureCreated();
+        }
+        
+
+        //Getting all data 
+        [HttpGet]
+        public async Task<IActionResult> GetAllProducts([FromQuery] ProductQueryParameters queryParameters) //to see the amount of product you want you need to specify that amount as int here, and to see others you need to specify page number 
+        {
+            IQueryable<Product> products = _context.Products.Where(p=>p.IsAvailable == true);  //we make small changes so that it can deffer with Version 1
+
+            //filtering by price
+            if (queryParameters.MinPrice != null && queryParameters.MaxPrice != null) 
+            {
+                products = products.Where(
+                    p => p.Price >= queryParameters.MinPrice.Value &&
+                    p.Price <= queryParameters.MaxPrice.Value);
+            }
+
+            //filtering by sku
+            if (!string.IsNullOrEmpty(queryParameters.Sku))
+            {
+                products = products.Where(p => p.Sku == queryParameters.Sku);
+            }
+
+            //serching items example you can pass this parameters: https://localhost:44388/v2.0/products?size=10&page=1&name=Orange mineral water
+            if (!string.IsNullOrEmpty(queryParameters.Name)) 
+            {
+                products = products.Where(
+                    p => p.Name.ToLower().Contains(queryParameters.Name.ToLower()));
+            }
+
+            //Sorting items example: https://localhost:44388/v2.0/products?sortBy=Price&sortOrder=desc
+            if (!string.IsNullOrEmpty(queryParameters.SortBy))
+            {
+                if (typeof(Product).GetProperty(queryParameters.SortBy) != null)
+                {
+                    products = products.OrderByCustom(queryParameters.SortBy, queryParameters.SortOrder);
+                }
+            }
+
+            products = products
+                .Skip(queryParameters.Size * (queryParameters.Page - 1)) 
+                .Take(queryParameters.Size);
+
+            return Ok(await products.ToArrayAsync());
+        }
+
+        //Getting specific data
+        [HttpGet("{id:int}")]
+        public async Task<IActionResult> GetProduct(int id)
+        {
+            var product = await _context.Products.FindAsync(id);
+            if (product == null)
+            {
+                return NotFound();
+            }
+            return Ok(product);
+        }
+
+        //Adding the item
+        [HttpPost]
+        public async Task<ActionResult<Product>> PostProduct([FromBody] Product product)  // by ActionResult<Product> We expect to return Action result of type product, async Task<> , await for asnchronization.
+        {
+            _context.Products.Add(product);
+            await _context.SaveChangesAsync();
+            return CreatedAtAction(         
+                "GetProduct",               
+                new { id = product.Id },    
+                product                     
+                );                          
+        }
+
+        //Updating the item
+        [HttpPut("{id}")]
+        public async Task<IActionResult> PutProduct([FromRoute] int id, [FromBody] Product product) //Task<IActionResult> we use this because when everything is right we dont return anything.
+        {
+            if (id != product.Id) 
+            {
+                return BadRequest();
+            }
+
+            _context.Entry(product).State = EntityState.Modified;
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (_context.Products.Find(id) == null) 
+                {
+                    return NotFound();
+                }
+                throw;
+            }
+
+            return NoContent(); 
+        }
+
+        //Deleting the item
+        [HttpDelete("{id}")]
+        public async Task<ActionResult<Product>> DeleteProduct(int id) 
+        {
+            var product = await _context.Products.FindAsync(id); 
+            if (product == null)
+            {
+                return NotFound();
+            }
+
+            _context.Products.Remove(product);
+            await _context.SaveChangesAsync();
+
+            return product; 
         }
     }
 }
