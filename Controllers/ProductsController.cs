@@ -131,5 +131,17 @@ namespace HPlusSport.API.Controllers
             }
             return Ok(product);
         }
+
+        [HttpPost]
+        public async Task<ActionResult<Product>> PostProduct([FromBody] Product product)  // by ActionResult<Product> We expect to return Action result of type product, async Task<> , await for asnchronization.
+        {
+            _context.Products.Add(product);
+            await _context.SaveChangesAsync();
+            return CreatedAtAction(         // To get the added item we use CreatedAtAction method which need:  
+                "GetProduct",               //name of the function to retrieve a product, in this case GetProduct() that has ben define above,
+                new { id = product.Id },    //the argument , which is id of the product, which set autoamtically after adding the product and save the changes
+                product                     //the product it self, but here .NET framework will bind everything in the Product class, there are some secret property
+                );                          //you dont want to reveal to the user, they you need to create another class view and return it instead of returning the complete data.
+        }
     }
 }

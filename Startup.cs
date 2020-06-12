@@ -29,7 +29,13 @@ namespace HPlusSport.API
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddDbContext<ShopContext>(Options=> Options.UseInMemoryDatabase("Shop"));
-            services.AddControllers();
+            //services.AddControllers();
+            services.AddControllers() //This code automatically prevent application from giving automatically error message when argument prodided by the user in URL is not valid.
+                .ConfigureApiBehaviorOptions(Options =>
+                {
+                    //Options.SuppressModelStateInvalidFilter = true;
+                }
+                );
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

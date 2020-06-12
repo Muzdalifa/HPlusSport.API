@@ -1,4 +1,5 @@
-﻿using System.Text.Json.Serialization;
+﻿using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace HPlusSport.API.Models
 {
@@ -6,7 +7,9 @@ namespace HPlusSport.API.Models
     {
         public int Id { get; set; }
         public string Sku { get; set; }
+        [Required]
         public string Name { get; set; }
+        [MaxLength(255)]
         public string Description { get; set; }
 
         public decimal Price { get; set; }
