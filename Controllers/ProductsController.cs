@@ -92,9 +92,9 @@ namespace HPlusSport.API.Controllers
             }
 
             //filtering by sku
-            if(!string.IsNullOrEmpty(queryParameters.Sku))
+            if (!string.IsNullOrEmpty(queryParameters.Sku))
             {
-                products = products.Where(p=>p.Sku == queryParameters.Sku);
+                products = products.Where(p => p.Sku == queryParameters.Sku);
             }
 
             //serching items example you can pass this parameters: https://localhost:44388/products?size=10&page=1&name=Orange mineral water
@@ -107,7 +107,7 @@ namespace HPlusSport.API.Controllers
             //Sorting items example: https://localhost:44388/products?sortBy=Price&sortOrder=desc
             if (!string.IsNullOrEmpty(queryParameters.SortBy))
             {
-                if(typeof(Product).GetProperty(queryParameters.SortBy) != null)
+                if (typeof(Product).GetProperty(queryParameters.SortBy) != null)
                 {
                     products = products.OrderByCustom(queryParameters.SortBy, queryParameters.SortOrder);
                 }
@@ -142,6 +142,31 @@ namespace HPlusSport.API.Controllers
                 new { id = product.Id },    //the argument , which is id of the product, which set autoamtically after adding the product and save the changes
                 product                     //the product it self, but here .NET framework will bind everything in the Product class, there are some secret property
                 );                          //you dont want to reveal to the user, they you need to create another class view and return it instead of returning the complete data.
+        }
+
+        [HttpPut("{id}")]
+        public async Task<IActionResult> PutProduct([FromRoute]int id, [FromBody] Product product) //Task<IActionResult> we use this because when everything is right we dont return anything.
+        {
+            if(id != product.Id) //we have 2 id here id from route when we click send it will be passed from URL and id in the body specified by the user
+            {
+                return BadRequest();
+            }
+
+            _context.Entry(product).State = EntityState.Modified;
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch(DbUpdateConcurrencyException)
+            {
+                if(_context.Products.Find(id)==null) //you might want to check if the id of the product exist in this moment, some time it can happen may be some one delete it at that moment
+                {
+                    return NotFound();
+                }
+                throw;
+            }
+
+            return NoContent(); //if everything goes OK, return nothing. This is the suggested .NeT method to return when you update items in db
         }
     }
 }
