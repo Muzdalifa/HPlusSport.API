@@ -38,6 +38,20 @@ namespace HPlusSport.API
                     //Options.SuppressModelStateInvalidFilter = true;
                 }
                 );
+
+            //Configure CORS so that Web Api can be accessed by Web application. this are default policies
+            services.AddCors(options =>
+            {
+                options.AddDefaultPolicy(builder => 
+                {
+                    //here you can add more policies as you wish and provide unique name for each of them, or use default polcy, you dont have to provide name in default policies
+                    builder.WithOrigins("https://localhost:44348") //here you specify the port of the project you allow to access this API, in our case port of HPlusSport.Web project in its lunchSetting.json folder
+                            .AllowAnyHeader()
+                            .AllowAnyMethod();
+                });
+            });
+
+
             //Configuring URL versioning.
             services.AddApiVersioning(Options => {
                 Options.ReportApiVersions = true;
@@ -55,9 +69,11 @@ namespace HPlusSport.API
                 app.UseDeveloperExceptionPage();
             }
 
-            app.UseHttpsRedirection();
+            app.UseHttpsRedirection(); //force the user to use https, this is added autometically when yoy tick Configure for HTTP when you start to create project 
 
             app.UseRouting();
+
+            app.UseCors(); //you can pass name if you want example app.UseCors("my-policy");, but here we leave it as default policy
 
             app.UseAuthorization();
 
