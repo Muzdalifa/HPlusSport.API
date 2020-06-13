@@ -5,6 +5,7 @@ using System.Reflection;
 using System.Threading.Tasks;
 using HPlusSport.API.Classes;
 using HPlusSport.API.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -15,6 +16,7 @@ namespace HPlusSport.API.Controllers
     //[Route("v{v:apiVersion}/products")] //we have removed [controller] so that the route to this controller can be acessed directly by the name of the controller.
     [Route("products")] //implementing header versioning add this only and line in startup file. Versioning in Header is MORE PRACTIBLE than other, QueryString is the easiest one to implement. 
     [ApiController]
+    [Authorize]
     public class ProductsV1_0Controller : ControllerBase
     {
         private readonly ShopContext _context;

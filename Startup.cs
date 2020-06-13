@@ -39,6 +39,16 @@ namespace HPlusSport.API
                 }
                 );
 
+            //protecting api by identity server
+            services.AddAuthentication("Bearer")
+                .AddJwtBearer("Bearer", options=>
+                {
+                    options.Authority = "http://localhost:58750"; //port of the identity server
+                    options.RequireHttpsMetadata = false;
+
+                    options.Audience = "hps-api";
+                });
+
             //Configure CORS so that Web Api can be accessed by Web application. this are default policies
             services.AddCors(options =>
             {
@@ -75,6 +85,7 @@ namespace HPlusSport.API
 
             app.UseCors(); //you can pass name if you want example app.UseCors("my-policy");, but here we leave it as default policy
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>

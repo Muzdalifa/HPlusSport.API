@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HPlusSport.Web", "..\HPlusS
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HPlusSuport.IdentityServer", "..\HPlusSuport.IdentityServer\HPlusSuport.IdentityServer.csproj", "{CD0953DC-7E86-423B-A955-10DEA9DD6358}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HPlusSport.ConsoleApp", "..\HPlusSport.ConsoleApp\HPlusSport.ConsoleApp.csproj", "{848170CC-1AAB-42BB-9970-00413C47ADE5}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{CD0953DC-7E86-423B-A955-10DEA9DD6358}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CD0953DC-7E86-423B-A955-10DEA9DD6358}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CD0953DC-7E86-423B-A955-10DEA9DD6358}.Release|Any CPU.Build.0 = Release|Any CPU
+		{848170CC-1AAB-42BB-9970-00413C47ADE5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{848170CC-1AAB-42BB-9970-00413C47ADE5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{848170CC-1AAB-42BB-9970-00413C47ADE5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{848170CC-1AAB-42BB-9970-00413C47ADE5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
